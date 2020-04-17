@@ -9,7 +9,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/bodeiBDD', require('./routes/pelicula')); //se importa la ruta de peticiones Peliculas
+app.use('/vodeiBDD', require('./routes/pelicula')); //se importa la ruta de peticiones Peliculas
 
 const history = require('connect-history-api-fallback'); //para trabajar con el historial de Routes
 app.use(history());
