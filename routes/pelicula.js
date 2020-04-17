@@ -1,46 +1,44 @@
 import conexion from "../conections/vodeibdd";
 import express from "express";
 
-const router = express.Router();
-
-router.post("/pelicula", async (req, res) => {
-  const body = req.body;
-
-  var sqlQueryInsertar =
+const router = express.Router(); //se importan las rutas REST de express
+//req es request (peticion) y res es result (resultado)
+router.post("/pelicula", async (req, res) => { //ruta de tipo POST 
+  const body = req.body; //se extra el cuerpo de la pelicon
+  console.log(body);
+  var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
-  sqlQueryInsertar +=
+  sql +=
     "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id_pelicula`, `portada`, `tipo`) VALUES (";
-  sqlQueryInsertar += "'" + body.titulo + "', ";
-  sqlQueryInsertar += "'" + body.titulo_original + "', ";
-  sqlQueryInsertar += "'" + body.idioma + "', ";
-  sqlQueryInsertar += "'" + body.genero + "', ";
-  sqlQueryInsertar += "'" + body.subtitulo + "', ";
-  sqlQueryInsertar += "'" + body.pais + "', ";
-  sqlQueryInsertar += "'" + body.productora + "', ";
-  sqlQueryInsertar += "'" + body.fecha_estreno + "', ";
-  sqlQueryInsertar += "'" + body.actores + "', ";
-  sqlQueryInsertar += "'" + body.director + "', ";
-  sqlQueryInsertar += "'" + body.duracion + "', ";
-  sqlQueryInsertar += "'" + body.id_pelicula + "', ";
-  sqlQueryInsertar += "'" + body.portada + "', ";
-  sqlQueryInsertar += "'" + body.tipo + "'";
-  sqlQueryInsertar += ")";
+  sql += "'" + body.titulo + "', ";
+  sql += "'" + body.titulo_original + "', ";
+  sql += "'" + body.idioma + "', ";
+  sql += "'" + body.genero + "', ";
+  sql += "'" + body.subtitulo + "', ";
+  sql += "'" + body.pais + "', ";
+  sql += "'" + body.productora + "', ";
+  sql += "'" + body.fecha_estreno + "', ";
+  sql += "'" + body.actores + "', ";
+  sql += "'" + body.director + "', ";
+  sql += "'" + body.duracion + "', ";
+  sql += "'" + body.id_pelicula + "', ";
+  sql += "'" + body.portada + "', ";
+  sql += "'" + body.tipo + "'";
+  sql += ")";
 
-  await conexion.query(sqlQueryInsertar, function (error, row, cols) {
-    if (error) {
+  await conexion.query(sql, function (error, row, cols) { //se utiliza await para esperar que se guarde en la BDD
+    if (error) {                       //error es un try catch incluido, row arroja los resultados de la bdd
       res.write(
-        JSON.stringify({
+        JSON.stringify({              //si hay un error envia un json con el error
           error: true,
           error_object: error,
         })
       );
       res.end();
-    } else {
-      var iIDCreated = row.insertId;
+    } else {                        //si no hay error se devuelve un json indicando que se realizo la peticion
       res.write(
         JSON.stringify({
-          error: false,
-          idCreated: iIDCreated,
+          error: false
         })
       );
       res.end();
@@ -49,9 +47,8 @@ router.post("/pelicula", async (req, res) => {
 });
 
 router.get("/pelicula/:id", async (req, res) => {
-  const id = req.params;
-  var sql = "SELECT * FROM peliculas where id_pelicula";
-  sql = " WHERE id_pelicula = '" + id + "'";
+  const id = req.params.id;
+  var sql = "SELECT * FROM peliculas WHERE id_pelicula = '" + id + "'";
   await conexion.query(sql, function (error, row, cols) {
     if (error) {
       res.write(
@@ -92,86 +89,86 @@ router.get("/pelicula", async (req, res) => {
 });
 
 router.delete("/pelicula/:id", async (req, res) => {
-  const id = req.params;
-  var sql = "DELETE FROM `peliculas` WHERE `id_pelicula` = '" + id + "'";
+  const id = req.params.id;
+  var sql = "DELETE FROM peliculas WHERE id_pelicula = '" + id + "'"
   conexion.query(sql, function (error, row, cols) {
     if (error) {
-      response.write(
+      res.write(
         JSON.stringify({
           error: true,
           error_object: errDelete,
         })
       );
-      response.end();
+      res.end();
     } else {
-      response.write(
+      res.write(
         JSON.stringify({
           error: false,
         })
       );
-      response.end();
+      res.end();
     }
   });
 });
 
 router.put("/pelicula/:id", async (req, res) => {
-  const _id = req.params.id;
+  const id = req.params.id;
   const body = req.body;
-  var sql = "UPDATE `peliculas` SET `";
+  var sql = "UPDATE `peliculas` SET ";
   if (body.hasOwnProperty("titulo_original")) {
-    sql += "Titulo_Original = '" + body.titulo_original + "' ";
+    sql += "`Titulo_Original` = '" + body.titulo_original + "', ";
   }
   if (body.hasOwnProperty("idioma")) {
-    sql += "Idioma = '" + body.idioma + "' ";
+    sql += "`Idioma` = '" + body.idioma + "', ";
   }
   if (body.hasOwnProperty("genero")) {
-    sql += "Genero = '" + body.genero + "' ";
+    sql += "`Genero` = '" + body.genero + "', ";
   }
   if (body.hasOwnProperty("subtitulo")) {
-    sql += "Subtitulo = '" + body.subtitulo + "' ";
+    sql += "`Subtitulo` = '" + body.subtitulo + "', ";
   }
   if (body.hasOwnProperty("pais")) {
-    sql += "Pais = '" + body.pais + "' ";
+    sql += "`Pais` = '" + body.pais + "', ";
   }
   if (body.hasOwnProperty("productora")) {
-    sql += "Productora = '" + body.productora + "' ";
+    sql += "`Productora` = '" + body.productora + "', ";
   }
   if (body.hasOwnProperty("fecha_estreno")) {
-    sql += "Fecha_estreno = '" + body.fecha_estreno + "' ";
+    sql += "`Fecha_estreno` = '" + body.fecha_estreno + "', ";
   }
   if (body.hasOwnProperty("actores")) {
-    sql += "Actores = '" + body.actores + "' ";
+    sql += "`Actores` = '" + body.actores + "', ";
   }
   if (body.hasOwnProperty("Director")) {
-    sql += "director = '" + body.Director + "' ";
+    sql += "`Director` = '" + body.Director + "', ";
   }
   if (body.hasOwnProperty("Duracion")) {
-    sql += "Duracion = '" + body.duracion + "' ";
+    sql += "`Duracion` = '" + body.duracion + "', ";
   }
   if (body.hasOwnProperty("portada")) {
-    sql += "portada = '" + body.portada + "' ";
+    sql += "`portada` = '" + body.portada + "', ";
   }
   if (body.hasOwnProperty("tipo")) {
-    sql += "tipo = '" + body.tipo + "' ";
+    sql += "`tipo` = '" + body.tipo + "' ";
   }
-  sql = " WHERE id_pelicula = '" + _id + "'";
+  sql += " WHERE id_pelicula = '" + id + "'";
 
   conexion.query(sql, function (error, row, cols) {
     if (error) {
-      response.write(
+      res.write(
         JSON.stringify({
           error: true,
           error_object: error,
         })
       );
-      response.end();
+      res.end();
     } else {
-      response.write(
+      res.write(
         JSON.stringify({
           error: false,
         })
       );
-      response.end();
+      res.end();
     }
   });
 });

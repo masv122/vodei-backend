@@ -2,26 +2,21 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
-import bodyParser from "bodyParser";
 
-
-const app = express();
+const app = express(); //se declara que la app es de tipo express para trabajar con el framework
 
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use('/bodeiBDD', require('./routes/pelicula'));
+app.use('/bodeiBDD', require('./routes/pelicula')); //se importa la ruta de peticiones Peliculas
 
-_dirname = path.resolve();
-const history = require('connect-history-api-fallback');
+const history = require('connect-history-api-fallback'); //para trabajar con el historial de Routes
 app.use(history());
-app.use(express.static(path.join(_dirname, 'public')));
+app.use(express.static(path.join(path.resolve(), 'public'))); //para usar la ruta del proyecto 
 
-app.set('puerto', process.env.PORT || 3000)
-app.listen(app.get('puerto'), function () {
+app.set('puerto', process.env.PORT || 3000) //se establece el puerto de conexion
+app.listen(app.get('puerto'), () => { //se avisa que se esta escuchando el puerto
     console.log('Servidor Vodei Enterteiment Funcionando en el puerto: ', app.get('puerto'))
 });
 
