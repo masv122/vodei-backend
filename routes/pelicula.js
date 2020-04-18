@@ -5,23 +5,22 @@ const router = express.Router(); //se importan las rutas REST de express
 //req es request (peticion) y res es result (resultado)
 router.post("/pelicula", async (req, res) => { //ruta de tipo POST 
   const body = req.body; //se extra el cuerpo de la pelicon
-  console.log(body);
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
     "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id_pelicula`, `portada`, `tipo`) VALUES (";
   sql += "'" + body.titulo + "', ";
-  sql += "'" + body.titulo_original + "', ";
+  sql += "'" + body.tituloOriginal + "', ";
   sql += "'" + body.idioma + "', ";
   sql += "'" + body.genero + "', ";
   sql += "'" + body.subtitulo + "', ";
   sql += "'" + body.pais + "', ";
   sql += "'" + body.productora + "', ";
-  sql += "'" + body.fecha_estreno + "', ";
+  sql += "'" + body.fecha + "', ";
   sql += "'" + body.actores + "', ";
   sql += "'" + body.director + "', ";
   sql += "'" + body.duracion + "', ";
-  sql += "'" + body.id_pelicula + "', ";
+  sql += "'" + body.id + "', ";
   sql += "'" + body.portada + "', ";
   sql += "'" + body.tipo + "'";
   sql += ")";
@@ -80,7 +79,7 @@ router.get("/pelicula", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          data: row,
+          peliculas: row,
         })
       );
       res.end();
