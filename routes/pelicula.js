@@ -25,7 +25,7 @@ router.post("/pelicula", async (req, res) => { //ruta de tipo POST
   sql += "'" + body.tipo + "'";
   sql += ")";
 
-  await conexion.query(sql, function (error, row, cols) { //se utiliza await para esperar que se guarde en la BDD
+  conexion.query(sql, function (error, row, cols) { //se utiliza await para esperar que se guarde en la BDD
     if (error) {                       //error es un try catch incluido, row arroja los resultados de la bdd
       res.write(
         JSON.stringify({              //si hay un error envia un json con el error
@@ -48,7 +48,7 @@ router.post("/pelicula", async (req, res) => { //ruta de tipo POST
 router.get("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM peliculas WHERE id_pelicula = '" + id + "'";
-  await conexion.query(sql, function (error, row, cols) {
+  conexion.query(sql, function (error, row, cols) {
     if (error) {
       res.write(
         JSON.stringify({
@@ -87,6 +87,31 @@ router.get("/pelicula", async (req, res) => {
   });
 });
 
+router.get("/peliculas/:tipo", async (req, res) => {
+    const tipo = req.params.tipo;
+    const sql = "SELECT * FROM peliculas WHERE tipo = '" + tipo + "'";
+    console.log(sql);
+    conexion.query(sql, async (error, row, col) => {
+      if(error){
+        res.write(
+          JSON.stringify({
+            error: true,
+            error_object : error
+          })
+        );
+        res.end();
+      } else {
+        res.write(
+          JSON.stringify({
+            error: false,
+            peliculas: row,
+          })
+        );
+        res.end();
+      }
+    })
+})
+
 router.delete("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "DELETE FROM peliculas WHERE id_pelicula = '" + id + "'"
@@ -114,6 +139,9 @@ router.put("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
   const body = req.body;
   var sql = "UPDATE `peliculas` SET ";
+  if (body.hasOwnProperty("titulo")) {
+    sql += "`Titulo` = '" + body.titulo + "', ";
+  }
   if (body.hasOwnProperty("titulo_original")) {
     sql += "`Titulo_Original` = '" + body.titulo_original + "', ";
   }
