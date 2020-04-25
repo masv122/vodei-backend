@@ -1,10 +1,20 @@
 import conexion from "../conections/vodeibdd";
-import express from "express";
-
-const router = express.Router();
-
-router.post("/serie", async (req, res) => {
-  const body = req.body;
+import express from 'express'; 
+import multer from 'multer'; 
+var storage = multer.diskStorage({
+ 
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/portadas/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+var upload = multer({ storage: storage }); 
+const router = express.Router(); 
+router.post("/serie", upload.single("portada"), async (req, res) => { 
+  const body = req.body; 
+  const file = req.file; 
   var sql =
     "INSERT INTO `series`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`,";
   sql +=
@@ -19,7 +29,7 @@ router.post("/serie", async (req, res) => {
   sql += "'" + body.fecha + "', ";
   sql += "'" + body.actores + "', ";
   sql += "'" + body.id + "', ";
-  sql += "'" + body.portada + "'";
+  sql += "'" + file.originalname + "'";
   sql += ")";
   console.log(sql);
   conexion.query(sql, async (error, row, col) => {
@@ -35,6 +45,7 @@ router.post("/serie", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
+          object: row,
         })
       );
       res.end();

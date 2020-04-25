@@ -1,10 +1,21 @@
-import conexion from "../conections/vodeibdd";
-import express from "express";
-
+import conexion from "../conections/vodeibdd"; //se importa la conexion
+import express from "express"; //se importa el framework express
+import multer from "multer"; //se importa el modulo multer para subir archivos al servidor
+var storage = multer.diskStorage({
+  //se crea una variable storage para guardar el destino y el nombre del archivo
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/portadas/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+var upload = multer({ storage: storage }); //se crea una variable upload que servira para subir el archivo recibido
 const router = express.Router(); //se importan las rutas REST de express
 //req es request (peticion) y res es result (resultado)
-router.post("/pelicula", async (req, res) => { //ruta de tipo POST 
+router.post("/pelicula", upload.single("portada"), async (req, res) => { //ruta de tipo POST
   const body = req.body; //se extra el cuerpo de la pelicon
+  const file = req.file; //se extrae el archivo de la peticion
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
@@ -21,23 +32,28 @@ router.post("/pelicula", async (req, res) => { //ruta de tipo POST
   sql += "'" + body.director + "', ";
   sql += "'" + body.duracion + "', ";
   sql += "'" + body.id + "', ";
-  sql += "'" + body.portada + "', ";
+  sql += "'" + file.originalname + "', ";
   sql += "'" + body.tipo + "'";
   sql += ")";
 
-  conexion.query(sql, function (error, row, cols) { //se utiliza await para esperar que se guarde en la BDD
-    if (error) {                       //error es un try catch incluido, row arroja los resultados de la bdd
+  conexion.query(sql, function (error, row, cols) {
+    //se utiliza await para esperar que se guarde en la BDD
+    if (error) {
+      //error es un try catch incluido, row arroja los resultados de la bdd
       res.write(
-        JSON.stringify({              //si hay un error envia un json con el error
+        JSON.stringify({
+          //si hay un error envia un json con el error
           error: true,
           error_object: error,
         })
       );
       res.end();
-    } else {                        //si no hay error se devuelve un json indicando que se realizo la peticion
+    } else {
+      //si no hay error se devuelve un json indicando que se realizo la peticion
       res.write(
         JSON.stringify({
-          error: false
+          error: false,
+          object: row,
         })
       );
       res.end();
@@ -88,33 +104,33 @@ router.get("/pelicula", async (req, res) => {
 });
 
 router.get("/peliculas/:tipo", async (req, res) => {
-    const tipo = req.params.tipo;
-    const sql = "SELECT * FROM peliculas WHERE tipo = '" + tipo + "'";
-    console.log(sql);
-    conexion.query(sql, async (error, row, col) => {
-      if(error){
-        res.write(
-          JSON.stringify({
-            error: true,
-            error_object : error
-          })
-        );
-        res.end();
-      } else {
-        res.write(
-          JSON.stringify({
-            error: false,
-            peliculas: row,
-          })
-        );
-        res.end();
-      }
-    })
-})
+  const tipo = req.params.tipo;
+  const sql = "SELECT * FROM peliculas WHERE tipo = '" + tipo + "'";
+  console.log(sql);
+  conexion.query(sql, async (error, row, col) => {
+    if (error) {
+      res.write(
+        JSON.stringify({
+          error: true,
+          error_object: error,
+        })
+      );
+      res.end();
+    } else {
+      res.write(
+        JSON.stringify({
+          error: false,
+          peliculas: row,
+        })
+      );
+      res.end();
+    }
+  });
+});
 
 router.delete("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "DELETE FROM peliculas WHERE id_pelicula = '" + id + "'"
+  var sql = "DELETE FROM peliculas WHERE id_pelicula = '" + id + "'";
   conexion.query(sql, function (error, row, cols) {
     if (error) {
       res.write(

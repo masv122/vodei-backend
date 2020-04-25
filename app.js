@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/vodeiBDD', require('./routes/pelicula')); //se importa la ruta de peticiones Peliculas
 app.use('/vodeiBDD', require('./routes/serie')); //se importa la ruta de peticiones serie
+app.use('/vodeiBDD', require('./routes/uploads')); //se importa la ruta de subidas
 
 const history = require('connect-history-api-fallback'); //para trabajar con el historial de Routes
 app.use(history());
