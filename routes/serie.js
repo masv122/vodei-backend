@@ -1,8 +1,7 @@
 import conexion from "../conections/vodeibdd";
-import express from 'express'; 
-import multer from 'multer'; 
+import express from "express";
+import multer from "multer";
 var storage = multer.diskStorage({
- 
   destination: function (req, file, cb) {
     cb(null, "./public/uploads/portadas/");
   },
@@ -10,15 +9,15 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-var upload = multer({ storage: storage }); 
-const router = express.Router(); 
-router.post("/serie", upload.single("portada"), async (req, res) => { 
-  const body = req.body; 
-  const file = req.file; 
+var upload = multer({ storage: storage });
+const router = express.Router();
+router.post("/serie", upload.single("portada"), async (req, res) => {
+  const body = req.body;
+  const file = req.file;
   var sql =
     "INSERT INTO `series`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`,";
   sql +=
-    "`Productora`, `Fecha_estreno`, `Actores`, `id_serie`, `portada`) VALUES (";
+    "`Productora`, `Fecha_estreno`, `Actores`, `id`, `portada`) VALUES (";
   sql += "'" + body.titulo + "', ";
   sql += "'" + body.tituloOriginal + "', ";
   sql += "'" + body.idioma + "', ";
@@ -45,7 +44,6 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          object: row,
         })
       );
       res.end();
@@ -55,7 +53,7 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
 
 router.get("/serie/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "SELECT * FROM series WHERE id_serie = '" + id + "'";
+  var sql = "SELECT * FROM series WHERE id = '" + id + "'";
   conexion.query(sql, async (error, row, col) => {
     if (error) {
       res.write(
@@ -66,7 +64,12 @@ router.get("/serie/:id", async (req, res) => {
       );
       res.end();
     } else {
-      res.write(JSON.stringify(row));
+      res.write(
+        JSON.stringify({
+          error: false,
+          serie: row[0],
+        })
+      );
       res.end();
     }
   });
@@ -88,7 +91,8 @@ router.get("/serie", async (req, res) => {
         JSON.stringify({
           error: false,
           series: row,
-        }));
+        })
+      );
       res.end();
     }
   });
@@ -96,7 +100,7 @@ router.get("/serie", async (req, res) => {
 
 router.delete("/serie/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "DELETE FROM `series` WHERE id_serie = '" + id + "'";
+  var sql = "DELETE FROM `series` WHERE id = '" + id + "'";
 
   conexion.query(sql, async (error, row, col) => {
     if (error) {
@@ -119,6 +123,7 @@ router.delete("/serie/:id", async (req, res) => {
 
 router.put("/serie/:id", async (req, res) => {
   const id = req.params.id;
+  const body = req.body;
   var sql = "UPDATE `series` SET ";
   if (body.hasOwnProperty("titulo")) {
     sql += "`Titulo` = '" + body.titulo + "', ";
@@ -147,11 +152,16 @@ router.put("/serie/:id", async (req, res) => {
   if (body.hasOwnProperty("actores")) {
     sql += "`Actores` = '" + body.actores + "', ";
   }
+  if (body.hasOwnProperty("nTemp")) {
+    sql += "`nTemp` = '" + body.nTemp + "', ";
+  }
+  if (body.hasOwnProperty("nCap")) {
+    sql += "`nCap` = '" + body.nCap + "', ";
+  }
   if (body.hasOwnProperty("portada")) {
     sql += "`portada` = '" + body.portada + "'";
   }
-  sql += " WHERE id_serie = '" + id + "'";
-
+  sql += " WHERE id = '" + id + "'";
   conexion.query(sql, async (error, row, col) => {
     if (error) {
       res.write(

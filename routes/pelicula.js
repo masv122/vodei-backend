@@ -19,7 +19,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => { //ruta 
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
-    "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id_pelicula`, `portada`, `tipo`) VALUES (";
+    "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id`, `portada`, `tipo`) VALUES (";
   sql += "'" + body.titulo + "', ";
   sql += "'" + body.tituloOriginal + "', ";
   sql += "'" + body.idioma + "', ";
@@ -63,7 +63,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => { //ruta 
 
 router.get("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "SELECT * FROM peliculas WHERE id_pelicula = '" + id + "'";
+  var sql = "SELECT * FROM peliculas WHERE id = '" + id + "'";
   conexion.query(sql, async (error, row, cols) => {
     if (error) {
       res.write(
@@ -130,7 +130,7 @@ router.get("/peliculas/:tipo", async (req, res) => {
 
 router.delete("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "DELETE FROM peliculas WHERE id_pelicula = '" + id + "'";
+  var sql = "DELETE FROM peliculas WHERE id = '" + id + "'";
   conexion.query(sql, async (error, row, cols) => {
     if (error) {
       res.write(
@@ -194,7 +194,7 @@ router.put("/pelicula/:id", async (req, res) => {
   if (body.hasOwnProperty("tipo")) {
     sql += "`tipo` = '" + body.tipo + "' ";
   }
-  sql += " WHERE id_pelicula = '" + id + "'";
+  sql += " WHERE id = '" + id + "'";
 
   conexion.query(sql, async (error, row, cols) => {
     if (error) {
