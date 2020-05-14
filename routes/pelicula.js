@@ -13,7 +13,8 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }); //se crea una variable upload que servira para subir el archivo recibido
 const router = express.Router(); //se importan las rutas REST de express
 //req es request (peticion) y res es result (resultado)
-router.post("/pelicula", upload.single("portada"), async (req, res) => { //ruta de tipo POST
+router.post("/pelicula", upload.single("portada"), async (req, res) => {
+  //ruta de tipo POST
   const body = req.body; //se extra el cuerpo de la pelicon
   const file = req.file; //se extrae el archivo de la peticion
   var sql = //se crea un sql
@@ -123,6 +124,25 @@ router.get("/peliculas/:tipo", async (req, res) => {
           peliculas: row,
         })
       );
+      res.end();
+    }
+  });
+});
+
+router.get("/pelicula-count", async (req, res) => {
+  const sql = "SELECT COUNT(*) cant FROM peliculas";
+  console.log(sql);
+  conexion.query(sql, async (error, row, col) => {
+    if (error) {
+      res.write(
+        JSON.stringify({
+          error: true,
+          error_object: error,
+        })
+      );
+      res.end();
+    } else {
+      res.write(JSON.stringify(row));
       res.end();
     }
   });
