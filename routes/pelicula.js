@@ -20,7 +20,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
-    "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id`, `portada`, `tipo`) VALUES (";
+    "`Fecha_estreno`, `Actores`, `Director`, `Duracion`, `id`, `portada`, `tipo`, `sinopsis`) VALUES (";
   sql += "'" + body.titulo + "', ";
   sql += "'" + body.tituloOriginal + "', ";
   sql += "'" + body.idioma + "', ";
@@ -34,10 +34,11 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
   sql += "'" + body.duracion + "', ";
   sql += "'" + body.id + "', ";
   sql += "'" + file.originalname + "', ";
-  sql += "'" + body.tipo + "'";
+  sql += "'" + body.tipo + "', ";
+  sql += "'" + body.sinopsis + "'";
   sql += ")";
 
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     //se utiliza await para esperar que se guarde en la BDD
     if (error) {
       //error es un try catch incluido, row arroja los resultados de la bdd
@@ -65,7 +66,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
 router.get("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM peliculas WHERE id = '" + id + "'";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -83,7 +84,7 @@ router.get("/pelicula/:id", async (req, res) => {
 
 router.get("/pelicula", async (req, res) => {
   var sql = "SELECT * FROM `peliculas`";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -108,7 +109,7 @@ router.get("/peliculas/:tipo", async (req, res) => {
   const tipo = req.params.tipo;
   const sql = "SELECT * FROM peliculas WHERE tipo = '" + tipo + "'";
   console.log(sql);
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -132,7 +133,7 @@ router.get("/peliculas/:tipo", async (req, res) => {
 router.get("/pelicula-count", async (req, res) => {
   const sql = "SELECT COUNT(*) cant FROM peliculas";
   console.log(sql);
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -151,12 +152,12 @@ router.get("/pelicula-count", async (req, res) => {
 router.delete("/pelicula/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "DELETE FROM peliculas WHERE id = '" + id + "'";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
           error: true,
-          error_object: errDelete,
+          error_object: error,
         })
       );
       res.end();
@@ -212,11 +213,14 @@ router.put("/pelicula/:id", async (req, res) => {
     sql += "`portada` = '" + body.portada + "', ";
   }
   if (body.hasOwnProperty("tipo")) {
-    sql += "`tipo` = '" + body.tipo + "' ";
+    sql += "`tipo` = '" + body.tipo + "', ";
+  }
+  if (body.hasOwnProperty("sinopsis")) {
+    sql += "`sinopsis` = '" + body.sinopsis + "' ";
   }
   sql += " WHERE id = '" + id + "'";
 
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({

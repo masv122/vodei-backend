@@ -17,7 +17,7 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
   var sql =
     "INSERT INTO `series`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`,";
   sql +=
-    "`Productora`, `Fecha_estreno`, `Actores`, `id`, `portada`) VALUES (";
+    "`Productora`, `Fecha_estreno`, `Actores`, `id`, `portada`, `sinopsis`) VALUES (";
   sql += "'" + body.titulo + "', ";
   sql += "'" + body.tituloOriginal + "', ";
   sql += "'" + body.idioma + "', ";
@@ -28,10 +28,11 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
   sql += "'" + body.fecha + "', ";
   sql += "'" + body.actores + "', ";
   sql += "'" + body.id + "', ";
-  sql += "'" + file.originalname + "'";
+  sql += "'" + file.originalname + "', ";
+  sql += "'" + body.sinopsis + "'";
   sql += ")";
   console.log(sql);
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -54,7 +55,7 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
 router.get("/serie/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM series WHERE id = '" + id + "'";
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -77,7 +78,7 @@ router.get("/serie/:id", async (req, res) => {
 
 router.get("/serie", async (req, res) => {
   var sql = "SELECT * FROM series";
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -98,11 +99,13 @@ router.get("/serie", async (req, res) => {
   });
 });
 
+
+
 router.delete("/serie/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "DELETE FROM `series` WHERE id = '" + id + "'";
 
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -159,10 +162,13 @@ router.put("/serie/:id", async (req, res) => {
     sql += "`nCap` = '" + body.nCap + "', ";
   }
   if (body.hasOwnProperty("portada")) {
-    sql += "`portada` = '" + body.portada + "'";
+    sql += "`portada` = '" + body.portada + "', ";
+  }
+  if (body.hasOwnProperty("sinopsis")) {
+    sql += "`sinopsis` = '" + body.sinopsis + "' ";
   }
   sql += " WHERE id = '" + id + "'";
-  conexion.query(sql, async (error, row, col) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({

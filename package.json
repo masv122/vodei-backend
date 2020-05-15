@@ -4,7 +4,8 @@
   "description": "backend de vodei",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js --exec babel-node"
+    "dev": "nodemon app.js --exec babel-node",
+    "start": "app.js --exec babel-node"
   },
   "author": "marcel",
   "license": "ISC",
