@@ -76,7 +76,10 @@ router.get("/pelicula/:id", async (req, res) => {
       );
       res.end();
     } else {
-      res.write(JSON.stringify(row));
+      res.write(JSON.stringify({
+        error: false,
+        pelicula: row[0]
+      }));
       res.end();
     }
   });
