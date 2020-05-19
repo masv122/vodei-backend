@@ -55,7 +55,6 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          object: row,
         })
       );
       res.end();
