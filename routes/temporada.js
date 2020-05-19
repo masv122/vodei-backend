@@ -6,10 +6,11 @@ const router = express.Router();
 router.post("/temporada", async (req, res) => {
   const body = req.body;
   var sql =
-    "INSERT INTO `temporadas`(`id`, `id_serie`, `titulo`) VALUES (";
+    "INSERT INTO `temporadas`(`id`, `id_serie`, `titulo`, `sinopsis`) VALUES (";
   sql += "'" + body.id + "', ";
   sql += "'" + body.id_serie + "', ";
-  sql += "'" + body.titulo + "'";
+  sql += "'" + body.titulo + "', ";
+  sql += "'" + body.sinopsis + "'";
   sql += ")";
   conexion.query(sql, async (error, row, col) => {
     if (error) {
@@ -130,6 +131,9 @@ router.put("/temporada/:id", async (req, res) => {
   var sql = "UPDATE `temporadas` SET ";
   if (body.hasOwnProperty("titulo")) {
     sql += "`titulo` = '" + body.titulo + "', ";
+  }
+  if (body.hasOwnProperty("sinopsis")) {
+    sql += "`sinopsis` = '" + body.sinopsis + "', ";
   }
   if (body.hasOwnProperty("tipo")) {
     sql += "`id_serie` = '" + body.tipo + "' ";

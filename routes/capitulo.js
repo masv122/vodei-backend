@@ -5,19 +5,19 @@ const router = express.Router();
 
 router.post("/capitulo", async (req, res) => {
   const body = req.body;
-  const file = req.file;
   var sql =
-    "INSERT INTO `capitulos`(`id`, `id_temporada`, `duracion`, `idioma`, `subtitulos`, `director`, `titulo`) VALUES (";
+    "INSERT INTO `capitulos`(`id`, `id_temporada`, `duracion`, `idioma`, `subtitulos`, `director`, `sinopsis`, `titulo`) VALUES (";
   sql += "'" + body.id + "', ";
   sql += "'" + body.id_temporada + "', ";
   sql += "'" + body.duracion + "', ";
   sql += "'" + body.idioma + "', ";
   sql += "'" + body.subtitulos + "', ";
   sql += "'" + body.director + "', ";
+  sql += "'" + body.sinopsis + "', ";
   sql += "'" + body.titulo + "'";
   sql += ")";
 
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -40,7 +40,7 @@ router.post("/capitulo", async (req, res) => {
 router.get("/capitulo/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM `capitulos` WHERE  id = '" + id + "'";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -64,7 +64,7 @@ router.get("/capitulo/:id", async (req, res) => {
 router.get("/capitulos-temporada/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM `capitulos` WHERE  id_temporada = '" + id + "'";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -87,7 +87,7 @@ router.get("/capitulos-temporada/:id", async (req, res) => {
 
 router.get("/capitulo", async (req, res) => {
   var sql = "SELECT * FROM `capitulos`";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
         JSON.stringify({
@@ -111,12 +111,12 @@ router.get("/capitulo", async (req, res) => {
 router.delete("/capitulo/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "DELETE FROM `capitulos` WHERE  id = '" + id + "'";
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
           error: true,
-          error_object: errDelete,
+          error_object: error,
         })
       );
       res.end();
@@ -150,12 +150,15 @@ router.put("/capitulo/:id", async (req, res) => {
   if (body.hasOwnProperty("director")) {
     sql += "`director` = '" + body.director + "', ";
   }
+  if (body.hasOwnProperty("sinopsis")) {
+    sql += "`sinopsis` = '" + body.sinopsis + "', ";
+  }
   if (body.hasOwnProperty("titulo")) {
     sql += "`titulo` = '" + body.titulo + "'";
   }
   sql += " WHERE id = '" + id + "'";
 
-  conexion.query(sql, async (error, row, cols) => {
+  conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
