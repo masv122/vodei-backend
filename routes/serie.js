@@ -1,6 +1,8 @@
 import conexion from "../conections/vodeibdd";
 import express from "express";
 import multer from "multer";
+import app from "../app";
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/uploads/portadas/");
@@ -14,6 +16,7 @@ const router = express.Router();
 router.post("/serie", upload.single("portada"), async (req, res) => {
   const body = req.body;
   const file = req.file;
+  const id = app.uuidv4();
   var sql =
     "INSERT INTO `series`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`,";
   sql +=
@@ -27,7 +30,7 @@ router.post("/serie", upload.single("portada"), async (req, res) => {
   sql += "'" + body.productora + "', ";
   sql += "'" + body.fecha + "', ";
   sql += "'" + body.actores + "', ";
-  sql += "'" + body.id + "', ";
+  sql += "'" + id + "', ";
   sql += "'" + file.originalname + "', ";
   sql += "'" + body.sinopsis + "'";
   sql += ")";

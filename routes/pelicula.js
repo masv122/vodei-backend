@@ -1,6 +1,8 @@
 import conexion from "../conections/vodeibdd"; //se importa la conexion
 import express from "express"; //se importa el framework express
 import multer from "multer"; //se importa el modulo multer para subir archivos al servidor
+import app from "../app";
+
 var storage = multer.diskStorage({
   //se crea una variable storage para guardar el destino y el nombre del archivo
   destination: function (req, file, cb) {
@@ -17,6 +19,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
   //ruta de tipo POST
   const body = req.body; //se extra el cuerpo de la pelicon
   const file = req.file; //se extrae el archivo de la peticion
+  const id = app.uuidv4();
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
@@ -32,7 +35,7 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
   sql += "'" + body.actores + "', ";
   sql += "'" + body.director + "', ";
   sql += "'" + body.duracion + "', ";
-  sql += "'" + body.id + "', ";
+  sql += "'" + id + "', ";
   sql += "'" + file.originalname + "', ";
   sql += "'" + body.tipo + "', ";
   sql += "'" + body.sinopsis + "'";

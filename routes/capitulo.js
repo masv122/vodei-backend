@@ -1,13 +1,15 @@
 import express from "express";
 import conexion from "../conections/vodeibdd";
+import app from "../app";
 
 const router = express.Router();
 
 router.post("/capitulo", async (req, res) => {
   const body = req.body;
+  const id = app.uuidv4();
   var sql =
     "INSERT INTO `capitulos`(`id`, `id_temporada`, `duracion`, `idioma`, `subtitulos`, `director`, `sinopsis`, `titulo`) VALUES (";
-  sql += "'" + body.id + "', ";
+  sql += "'" + id + "', ";
   sql += "'" + body.id_temporada + "', ";
   sql += "'" + body.duracion + "', ";
   sql += "'" + body.idioma + "', ";
