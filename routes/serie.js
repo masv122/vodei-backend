@@ -1,7 +1,8 @@
 import conexion from "../conections/vodeibdd";
 import express from "express";
 import multer from "multer";
-import app from "../app";
+import { v4 as uuidv4 } from 'uuid';
+
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -16,7 +17,7 @@ const router = express.Router();
 router.post("/serie", upload.single("portada"), async (req, res) => {
   const body = req.body;
   const file = req.file;
-  const id = app.uuidv4();
+  const id = 'ser-' + uuidv4();
   var sql =
     "INSERT INTO `series`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`,";
   sql +=
@@ -107,13 +108,12 @@ router.get("/serie", async (req, res) => {
 router.delete("/serie/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "DELETE FROM `series` WHERE id = '" + id + "'";
-
   conexion.query(sql, async (error) => {
     if (error) {
       res.write(
         JSON.stringify({
           error: true,
-          errorObject: error,
+          error_object: error,
         })
       );
       res.end();
@@ -123,6 +123,7 @@ router.delete("/serie/:id", async (req, res) => {
           error: false,
         })
       );
+      res.end();
     }
   });
 });

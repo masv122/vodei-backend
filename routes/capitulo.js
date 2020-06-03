@@ -1,12 +1,12 @@
 import express from "express";
 import conexion from "../conections/vodeibdd";
-import app from "../app";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
 router.post("/capitulo", async (req, res) => {
   const body = req.body;
-  const id = app.uuidv4();
+  const id = "cap-" + uuidv4();
   var sql =
     "INSERT INTO `capitulos`(`id`, `id_temporada`, `duracion`, `idioma`, `subtitulos`, `director`, `sinopsis`, `titulo`) VALUES (";
   sql += "'" + id + "', ";
@@ -66,6 +66,31 @@ router.get("/capitulo/:id", async (req, res) => {
 router.get("/capitulos-temporada/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM `capitulos` WHERE  id_temporada = '" + id + "'";
+  conexion.query(sql, async (error, row) => {
+    if (error) {
+      res.write(
+        JSON.stringify({
+          error: true,
+          error_object: error,
+        })
+      );
+      res.end();
+    } else {
+      res.write(
+        JSON.stringify({
+          error: false,
+          capitulos: row,
+        })
+      );
+      res.end();
+    }
+  });
+});
+
+router.get("/capitulos-serie/:id", async (req, res) => {
+  const id = req.params.id;
+  var sql =
+    "SELECT * FROM `capitulos` WHERE `id_temporada` IN (SELECT id_temporada FROM temporadas WHERE temporadas.id_serie = '"+ id +"')";
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(

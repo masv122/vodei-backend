@@ -1,7 +1,8 @@
 import conexion from "../conections/vodeibdd"; //se importa la conexion
 import express from "express"; //se importa el framework express
 import multer from "multer"; //se importa el modulo multer para subir archivos al servidor
-import app from "../app";
+import { v4 as uuidv4 } from 'uuid';
+
 
 var storage = multer.diskStorage({
   //se crea una variable storage para guardar el destino y el nombre del archivo
@@ -19,7 +20,9 @@ router.post("/pelicula", upload.single("portada"), async (req, res) => {
   //ruta de tipo POST
   const body = req.body; //se extra el cuerpo de la pelicon
   const file = req.file; //se extrae el archivo de la peticion
-  const id = app.uuidv4();
+  const id = 'mov-' + uuidv4();
+  console.log(id);
+
   var sql = //se crea un sql
     "INSERT INTO `peliculas`(`Titulo`, `Titulo_Original`, `Idioma`, `Genero`, `Subtitulo`, `Pais`, `Productora`,";
   sql +=
@@ -184,8 +187,8 @@ router.put("/pelicula/:id", async (req, res) => {
   if (body.hasOwnProperty("titulo")) {
     sql += "`Titulo` = '" + body.titulo + "', ";
   }
-  if (body.hasOwnProperty("titulo_original")) {
-    sql += "`Titulo_Original` = '" + body.titulo_original + "', ";
+  if (body.hasOwnProperty("tituloOriginal")) {
+    sql += "`Titulo_Original` = '" + body.tituloOriginal + "', ";
   }
   if (body.hasOwnProperty("idioma")) {
     sql += "`Idioma` = '" + body.idioma + "', ";
@@ -208,10 +211,10 @@ router.put("/pelicula/:id", async (req, res) => {
   if (body.hasOwnProperty("actores")) {
     sql += "`Actores` = '" + body.actores + "', ";
   }
-  if (body.hasOwnProperty("Director")) {
-    sql += "`Director` = '" + body.Director + "', ";
+  if (body.hasOwnProperty("director")) {
+    sql += "`Director` = '" + body.director + "', ";
   }
-  if (body.hasOwnProperty("Duracion")) {
+  if (body.hasOwnProperty("duracion")) {
     sql += "`Duracion` = '" + body.duracion + "', ";
   }
   if (body.hasOwnProperty("portada")) {

@@ -2,21 +2,20 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
-import { v4 as uuidv4 } from 'uuid';
 import pelicula from "./routes/pelicula";
 import serie from "./routes/serie";
 import temporada from "./routes/temporada";
 import capitulo from "./routes/capitulo";
 import uploads from "./routes/uploads";
 
-
 const app = express(); //se declara que la app es de tipo express para trabajar con el framework
+
 
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(uuidv4);
+
 
 //se importan las rutas a peticiones
 app.use("/vodei-server", pelicula);

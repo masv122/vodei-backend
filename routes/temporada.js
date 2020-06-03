@@ -1,12 +1,12 @@
 import conexion from "../conections/vodeibdd";
 import express from "express";
-import app from "../app";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
 router.post("/temporada", async (req, res) => {
   const body = req.body;
-  const id = app.uuidv4();
+  const id = "tem-" + uuidv4();
 
   var sql =
     "INSERT INTO `temporadas`(`id`, `id_serie`, `titulo`, `sinopsis`) VALUES (";
@@ -48,10 +48,12 @@ router.get("/temporada/:id", async (req, res) => {
       );
       res.end();
     } else {
-      res.write(JSON.stringify({
-        error: false,
-        temporadas: row,
-      }));
+      res.write(
+        JSON.stringify({
+          error: false,
+          temporadas: row,
+        })
+      );
       res.end();
     }
   });
@@ -107,7 +109,8 @@ router.get("/temporada", async (req, res) => {
 
 router.delete("/temporada/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "DELETE FROM `temporadas` WHERE  id = '" + id + "'";
+  var sql = "DELETE FROM `capitulos` WHERE `id_temporada` = '" + id + "';";
+  sql += "DELETE FROM `temporadas` WHERE  id = '" + id + "'";
   conexion.query(sql, async (error, row, cols) => {
     if (error) {
       res.write(
@@ -138,11 +141,10 @@ router.put("/temporada/:id", async (req, res) => {
   if (body.hasOwnProperty("sinopsis")) {
     sql += "`sinopsis` = '" + body.sinopsis + "', ";
   }
-  if (body.hasOwnProperty("tipo")) {
-    sql += "`id_serie` = '" + body.tipo + "' ";
+  if (body.hasOwnProperty("id_serie")) {
+    sql += "`id_serie` = '" + body.id_serie + "' ";
   }
   sql += " WHERE id = '" + id + "'";
-
   conexion.query(sql, function (error, row, cols) {
     if (error) {
       res.write(
