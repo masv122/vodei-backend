@@ -65,7 +65,10 @@ router.get("/capitulo/:id", async (req, res) => {
 
 router.get("/capitulos-temporada/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "SELECT * FROM `capitulos` WHERE  id_temporada = '" + id + "'";
+  var sql =
+    "SELECT capitulos.*, temporadas.titulo AS tempTitulo FROM capitulos LEFT JOIN temporadas ON( temporadas.id = capitulos.id_temporada ) WHERE capitulos.id_temporada = '" +
+    id +
+    "'";
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
@@ -90,7 +93,10 @@ router.get("/capitulos-temporada/:id", async (req, res) => {
 router.get("/capitulos-serie/:id", async (req, res) => {
   const id = req.params.id;
   var sql =
-    "SELECT * FROM `capitulos` WHERE `id_temporada` IN (SELECT id_temporada FROM temporadas WHERE temporadas.id_serie = '"+ id +"')";
+    "SELECT capitulos.*, temporadas.titulo AS tempTitulo FROM capitulos LEFT JOIN temporadas ON( temporadas.id = capitulos.id_temporada ) WHERE `id_temporada` IN (SELECT id_temporada FROM temporadas WHERE temporadas.id_serie = '" +
+    id +
+    "')";
+    console.log(sql);
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(

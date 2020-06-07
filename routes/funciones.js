@@ -6,14 +6,16 @@ const router = express.Router();
 
 router.post("/temporada", async (req, res) => {
   const body = req.body;
-  const id = "tem-" + uuidv4();
+  const id = "fun-" + uuidv4();
 
   var sql =
-    "INSERT INTO `temporadas`(`id`, `id_serie`, `titulo`, `sinopsis`) VALUES (";
+    "INSERT INTO `funcion`(`id`, `id_contenido`, `fecha`, `hora_inicio`, `hora_fin`, `id_sala`) VALUES (";
   sql += "'" + id + "', ";
-  sql += "'" + body.id_serie + "', ";
-  sql += "'" + body.titulo + "', ";
-  sql += "'" + body.sinopsis + "'";
+  sql += "'" + body.id_contenido + "', ";
+  sql += "'" + body.fecha + "', ";
+  sql += "'" + body.hora_inicio + "', ";
+  sql += "'" + body.hora_fin + "', ";
+  sql += "'" + body.id_sala + "'";
   sql += ")";
   conexion.query(sql, async (error) => {
     if (error) {
@@ -61,10 +63,7 @@ router.get("/temporada/:id", async (req, res) => {
 
 router.get("/temporada-serie/:id", async (req, res) => {
   const id = req.params.id;
-  const sql =
-    "SELECT temporadas.*, COUNT(capitulos.id) AS nroCapitulos FROM temporadas LEFT JOIN capitulos ON ( capitulos.id_temporada = temporadas.id ) WHERE id_serie = '" +
-    id +
-    "' GROUP BY temporadas.titulo";
+  const sql = "SELECT * FROM `temporadas` WHERE id_serie = '" + id + "'";
   console.log(sql);
   conexion.query(sql, async (error, row) => {
     if (error) {
