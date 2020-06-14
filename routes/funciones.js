@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
-router.post("/temporada", async (req, res) => {
+router.post("/funciones", async (req, res) => {
   const body = req.body;
   const id = "fun-" + uuidv4();
 
@@ -37,9 +37,9 @@ router.post("/temporada", async (req, res) => {
   });
 });
 
-router.get("/temporada/:id", async (req, res) => {
+router.get("/funciones/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "SELECT * FROM `temporadas` WHERE id = '" + id + "'";
+  var sql = "SELECT * FROM `funcion` WHERE id = '" + id + "'";
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
@@ -53,7 +53,7 @@ router.get("/temporada/:id", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          temporadas: row,
+          funcion: row,
         })
       );
       res.end();
@@ -61,9 +61,9 @@ router.get("/temporada/:id", async (req, res) => {
   });
 });
 
-router.get("/temporada-serie/:id", async (req, res) => {
+router.get("/funcion-anterior/:id", async (req, res) => {
   const id = req.params.id;
-  const sql = "SELECT * FROM `temporadas` WHERE id_serie = '" + id + "'";
+  var sql = "SELECT * FROM funcion where `hora_inicio` < CURRENT_TIME AND `id_sala` = '" + id + "'  LIMIT 1";
   console.log(sql);
   conexion.query(sql, async (error, row) => {
     if (error) {
@@ -78,7 +78,7 @@ router.get("/temporada-serie/:id", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          temporadas: row,
+          funcion: row[0],
         })
       );
       res.end();
@@ -86,8 +86,10 @@ router.get("/temporada-serie/:id", async (req, res) => {
   });
 });
 
-router.get("/temporada", async (req, res) => {
-  var sql = "SELECT * FROM `temporadas`";
+router.get("/funcion-actual/:id", async (req, res) => {
+  const id = req.params.id;
+  var sql = "SELECT * FROM `funcion` WHERE CURRENT_TIME >= hora_inicio AND CURRENT_TIME <= hora_fin AND `id_sala` = '" + id + "'";
+  console.log(sql);
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(
@@ -101,7 +103,7 @@ router.get("/temporada", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
-          temporadas: row,
+          funcion: row[0],
         })
       );
       res.end();
@@ -109,9 +111,57 @@ router.get("/temporada", async (req, res) => {
   });
 });
 
-router.delete("/temporada/:id", async (req, res) => {
+router.get("/funcion-siguiente/:id", async (req, res) => {
   const id = req.params.id;
-  var sql = "DELETE FROM `temporadas` WHERE  id = '" + id + "'";
+  var sql = "SELECT * FROM funcion where `hora_inicio` > CURRENT_TIME AND `id_sala` = '" + id + "'  LIMIT 1";
+  console.log(sql);
+  conexion.query(sql, async (error, row) => {
+    if (error) {
+      res.write(
+        JSON.stringify({
+          error: true,
+          error_object: error,
+        })
+      );
+      res.end();
+    } else {
+      res.write(
+        JSON.stringify({
+          error: false,
+          funcion: row[0],
+        })
+      );
+      res.end();
+    }
+  });
+});
+
+router.get("/funciones", async (req, res) => {
+  var sql = "SELECT funcion.*, salas.numero AS numeroSala, peliculas.Titulo AS titulo FROM funcion LEFT JOIN salas ON (salas.id = funcion.id_sala) LEFT JOIN peliculas ON (peliculas.id = funcion.id_contenido) ORDER BY hora_inicio ASC";
+  conexion.query(sql, async (error, row) => {
+    if (error) {
+      res.write(
+        JSON.stringify({
+          error: true,
+          error_object: error,
+        })
+      );
+      res.end();
+    } else {
+      res.write(
+        JSON.stringify({
+          error: false,
+          funciones: row,
+        })
+      );
+      res.end();
+    }
+  });
+});
+
+router.delete("/funciones/:id", async (req, res) => {
+  const id = req.params.id;
+  var sql = "DELETE FROM `funcion` WHERE  id = '" + id + "'";
   conexion.query(sql, async (error) => {
     if (error) {
       res.write(
@@ -132,18 +182,24 @@ router.delete("/temporada/:id", async (req, res) => {
   });
 });
 
-router.put("/temporada/:id", async (req, res) => {
+router.put("/funciones/:id", async (req, res) => {
   const id = req.params.id;
   const body = req.body;
-  var sql = "UPDATE `temporadas` SET ";
-  if (body.hasOwnProperty("titulo")) {
-    sql += "`titulo` = '" + body.titulo + "', ";
+  var sql = "UPDATE `funcion` SET ";
+  if (body.hasOwnProperty("id_contenido")) {
+    sql += "`id_contenido` = '" + body.id_contenido + "', ";
   }
-  if (body.hasOwnProperty("sinopsis")) {
-    sql += "`sinopsis` = '" + body.sinopsis + "', ";
+  if (body.hasOwnProperty("fecha")) {
+    sql += "`fecha` = '" + body.fecha + "', ";
   }
-  if (body.hasOwnProperty("id_serie")) {
-    sql += "`id_serie` = '" + body.id_serie + "' ";
+  if (body.hasOwnProperty("hora_inicio")) {
+    sql += "`hora_inicio` = '" + body.hora_inicio + "', ";
+  }
+  if (body.hasOwnProperty("hora_fin")) {
+    sql += "`hora_fin` = '" + body.hora_fin + "', ";
+  }
+  if (body.hasOwnProperty("id_sala")) {
+    sql += "`id_sala` = '" + body.id_sala + "' ";
   }
   sql += " WHERE id = '" + id + "'";
   conexion.query(sql, function (error) {

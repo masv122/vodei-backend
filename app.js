@@ -6,28 +6,32 @@ import pelicula from "./routes/pelicula";
 import serie from "./routes/serie";
 import temporada from "./routes/temporada";
 import capitulo from "./routes/capitulo";
+import salas from "./routes/salas";
+import funciones from "./routes/funciones";
 import uploads from "./routes/uploads";
 
 const app = express(); //se declara que la app es de tipo express para trabajar con el framework
-
 
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 //se importan las rutas a peticiones
 app.use("/vodei-server", pelicula);
 app.use("/vodei-server", serie);
 app.use("/vodei-server", temporada);
 app.use("/vodei-server", capitulo);
+app.use("/vodei-server", salas);
+app.use("/vodei-server", funciones);
 app.use("/vodei-server", uploads);
 app.get("/vodei-server/", async (req, res) => {
-    res.write(JSON.stringify({
-        con: true
-    }));
-    res.end();
+  res.write(
+    JSON.stringify({
+      con: true,
+    })
+  );
+  res.end();
 });
 
 //para trabajar con el historial de Routes
