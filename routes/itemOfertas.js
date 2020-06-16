@@ -33,6 +33,7 @@ router.post("/item_ofertas", async (req, res) => {
 router.get("/item_ofertas/:id", async (req, res) => {
   const id = req.params.id;
   var sql = "SELECT * FROM `item_ofertas` WHERE id_oferta = '" + id + "'";
+  console.log(sql);
   conexion.query(sql, async (error, row) => {
     if (error) {
       res.write(

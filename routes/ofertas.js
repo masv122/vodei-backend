@@ -28,6 +28,7 @@ router.post("/ofertas", async (req, res) => {
       res.write(
         JSON.stringify({
           error: false,
+          id: id
         })
       );
       res.end();
@@ -61,7 +62,7 @@ router.get("/ofertas/:id", async (req, res) => {
 
 router.get("/ofertas-tipo/:tipo", async (req, res) => {
     const tipo = req.params.tipo;
-    var sql = "SELECT * FROM `oferta` WHERE `tipo` = '" + tipo + "'";
+    var sql = "SELECT * FROM `ofertas` WHERE `tipo` = '" + tipo + "'";
     conexion.query(sql, async (error, row) => {
       if (error) {
         res.write(

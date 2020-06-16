@@ -1,10 +1,10 @@
 import mysql from "mysql";
 
 const myConnection = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "vodeibdd",
+    host: "fdb24.awardspace.net",
+    user: "3476357_vodeidbb",
+    password: "lunar1234567890",
+    database: "476357_vodeidbb",
   });
 
 export default myConnection;
